@@ -1,3 +1,10 @@
+%%      How it works
+%
+%           It looks at all neighbor and chooses the one with the least
+%           weight. If there is then a path that could be cheaper, it goes
+%           back and takes this one. 
+
+
 function [path, cost, stats] = dijkstra_graph(W, s, t)
 %DIJKSTRA_GRAPH  TASK 4 -- Dijkstra.
 %
@@ -16,56 +23,54 @@ function [path, cost, stats] = dijkstra_graph(W, s, t)
 %
 %   Check:   check_my_code('dijkstra')
 
-error('task:todo', 'Task 4 not started -- delete this line and begin.');
+%error('task:todo', 'Task 4 not started -- delete this line and begin.');
 
 n      = size(W, 1);
-g      = inf(n, 1);       % no route known yet
-g(s)   = 0;               % the start costs nothing
-par    = zeros(n, 1);
-closed = false(n, 1);
-order  = zeros(1, 0);
+    g      = inf(n, 1);       % no route known yet
+    g(s)   = 0;               % the start costs nothing
+    par    = zeros(n, 1);
+    closed = false(n, 1);
+    order  = zeros(1, 0);
 
-OPEN = open_new('minkey');
-OPEN = open_push(OPEN, s, g(s));
+    OPEN = open_new('minkey');
+    OPEN = open_push(OPEN, s, g(s));
 
-while ~open_isempty(OPEN)
-    [OPEN, u] = open_pop(OPEN);
-    if closed(u)
-        continue
-    end
-    closed(u)      = true;
-    order(end + 1) = u;   %#ok<AGROW>
-    trace_step(numel(order), u);
-    if u == t
-        break
-    end
-
-    [nb, w] = graph_neighbors(W, u);
-    for k = 1:numel(nb)
-        v = nb(k);
-        if closed(v)
+    while ~open_isempty(OPEN)
+        [OPEN, u] = open_pop(OPEN);
+        
+        if closed(u)
             continue
         end
+        closed(u)      = true;
+        order(end + 1) = u;   %#ok<AGROW>
+        trace_step(numel(order), u);
+        
+        if u == t
+            break
+        end
 
-        % TODO 1 -- What does the route to v cost if we go through u?
-        %           Available: g(u) and w(k).
-        gNew = inf;
-
-        % TODO 2 -- Is that better than what we already knew about v?
-        if false
-
-            % TODO 3 -- three lines:
-            %             - store the new value in g(v)
-            %             - set par(v)
-            %             - push v with the right key
-            %               ( open_push(OPEN, v, <key>) )
-
+        [nb, w] = graph_neighbors(W, u);
+        for k = 1:numel(nb)
+            v = nb(k);
+            if closed(v)
+                continue
+            end
+            
+            % TODO 1 -- Kosten zum Nachbarn v über u berechnen
+            candidate = g(u) + w(k);
+            
+            % TODO 2 -- Ist das besser als der bisherige Wert von g(v)?
+            if candidate < g(v)
+                % TODO 3 -- Werte aktualisieren und in OPEN pushen
+                g(v)   = candidate;
+                par(v) = u;
+                OPEN   = open_push(OPEN, v, g(v));
+            end
         end
     end
-end
 
-[path, cost]     = reconstruct_path(par, s, t, W);
-stats.expansions = numel(order);
-stats.order      = order;
-stats.g          = g;
+    [path, cost]     = reconstruct_path(par, s, t, W);
+    stats.expansions = numel(order);
+    stats.order      = order;
+    stats.g          = g;
 end

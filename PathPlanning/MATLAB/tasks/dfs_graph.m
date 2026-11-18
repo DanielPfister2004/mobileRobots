@@ -1,3 +1,36 @@
+%%   From basic 1
+%
+%       OPEN = open_new('fifo');         makes a fifo stack
+%       OPEN = open_push(OPEN,3);        puts the fist node with the value
+%                                           ...3 in it
+%       n = open_size(OPEN);             n will receive the value how big
+%                                           ...the stack is
+%       empty = open_isempty(OPEN);      asks if there is something on the
+%                                           ...stack (true - not empty)
+%       [OPEN,u] = open_pop(OPEN);       removes the latest node (depens
+%                                           ... if fifo/lifo
+
+%%  Now for this task
+%       
+%       DFS ... deth-first search
+%           1. starts with one path and goes until it finds the goal
+%           2. finished
+%           
+%           uses lifo 
+
+%       u ... active node 
+%       s ... start node 
+%       t ... goal node / max number of node
+%       W ... matrix
+%    cost ... how much the path is 
+%      nb ... neighbor node
+%       n ... max number of node 
+%     par ... parrent array - previouse node
+%    seen ... node was already seen 
+%  closed ... when node is already worked through returns true
+%       
+%       changing the weight of the nodes does not change the path
+
 function [path, cost, stats] = dfs_graph(W, s, t)
 %DFS_GRAPH  TASK 1 -- depth-first search.
 %
@@ -14,7 +47,7 @@ function [path, cost, stats] = dfs_graph(W, s, t)
 %
 %   See also OPEN_NEW, GRAPH_NEIGHBORS, RECONSTRUCT_PATH.
 
-error('task:todo', 'Task 1 not started -- delete this line and begin.');
+%error('task:todo', 'Task 1 not started -- delete this line and begin.');
 
 n      = size(W, 1);
 par    = zeros(n, 1);     % par(v): which node did we come from to reach v
@@ -26,7 +59,8 @@ order  = zeros(1, 0);     % which nodes came out, in order
 %           'lifo' = last in, first out
 %           'fifo' = first in, first out
 %           (Do TODO 1 first. The wrong one is deliberately here.)
-OPEN = open_new('fifo');
+
+OPEN = open_new('lifo');
 
 seen(s) = true;
 OPEN    = open_push(OPEN, s);
@@ -45,7 +79,8 @@ while ~open_isempty(OPEN)
     trace_step(numel(order), u);
 
     % TODO 3 -- When are we done? Replace false by the condition.
-    if false
+    if u == t %% when it reached the goal node it stops 
+        fprintf('Finished with this code');
         break
     end
 
@@ -59,6 +94,8 @@ while ~open_isempty(OPEN)
         % TODO 1 -- Two lines are missing here:
         %             - remember that we reached v coming from u
         %             - put v into OPEN  (open_push)
+        par(v) = u;
+        OPEN = open_push(OPEN, v);
         seen(v) = true;
     end
 end
